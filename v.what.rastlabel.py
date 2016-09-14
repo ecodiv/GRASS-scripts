@@ -108,8 +108,8 @@ def main(options, flags):
                 CT = "{} integer".format(RASTL2[j])
             else:
                 CT = "{} double precision".format(RASTL2[j])
-        Module('v.db.addcolumn', map=OUTP, columns=CT)
-        Module('v.what.rast', map=OUTP, raster=RAST2[j], column=RASTL2[j])
+            Module('v.db.addcolumn', map=OUTP, columns=CT)
+            Module('v.what.rast', map=OUTP, raster=RAST2[j], column=RASTL2[j])
 
     # Remove empty column
     # TODO: find out how to avoid creating that column (created by r.what)
