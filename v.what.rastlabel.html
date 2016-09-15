@@ -1,8 +1,18 @@
 <h2>DESCRIPTION</h2>
 
-<em>v.what.rastlabel</em> retrieves raster values and labels from one or more given raster maps for each point stored in a given vector map. The name of the columns with the raster values and labels are respectively<i>ID_name-of-raster-map</i> and <i>name-of-raster-map</i>.
+<em>v.what.rastlabel</em> retrieves raster values and labels from one
+or more given raster maps for each point stored in a given vector map.
+The name of the columns with the raster values and labels are
+respectively<i>ID_name-of-raster-map</i> and <i>name-of-raster-map</i>.
 
-<p>Optionally, the user can define raster layers without labels. In that case only raster values are uploaded to a column with the name <i>name-of-raster-map</i>.
+<p>Optionally, the user can define raster layers without labels. In
+that case only raster values are uploaded to a column with the name
+<i>name-of-raster-map</i>.
+
+<p>Except the columns with raster values, the attribute table of the
+output vector point map contains columns with coordinates [should
+probably be removed in future version] and a column 'label', which
+contains the cat values of input vector layer.
 
 <h2>SEE ALSO</h2>
 

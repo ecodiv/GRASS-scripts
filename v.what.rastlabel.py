@@ -59,7 +59,7 @@ import grass.script as gs
 import string
 from grass.pygrass.modules import Module
 from subprocess import PIPE
-
+import tempfile
 
 def main(options, flags):
 
@@ -81,7 +81,7 @@ def main(options, flags):
     OUTP = options['output']
 
     # Create vector with column names
-    CT = ['x double precision, y double precision, sitename999 integer']
+    CT = ['x double precision, y double precision, label integer']
     for i in xrange(len(RAST)):
         DT = gs.parse_command('r.info', flags='g', map=RAST[i],
                               quiet=True)['datatype']
@@ -93,7 +93,13 @@ def main(options, flags):
     CNT = ','.join(CT)
 
     # Get raster points of raster layers with labels
-    CAT = Module('r.what', flags='f', map=RAST, points=VECT,
+    # Export point map to text file first and use that as input in r.what
+    # TODO: the above is workaround to get vector cat value as label. Easier,
+    # would be to use vector point map directly as input, but that does not
+    # give label to link back to old vector layer
+    PAT = Module('v.out.ascii', input=VECT, format='point', separator='space',
+                 precision=12, stdout_=PIPE).outputs.stdout
+    CAT = Module('r.what', flags='f', map=RAST, stdin_=PAT,
                  stdout_=PIPE).outputs.stdout
     CATV = CAT.replace('|*|', '||')
     Module('v.in.ascii', input='-', stdin_=CATV, output=OUTP, columns=CNT,
@@ -110,10 +116,6 @@ def main(options, flags):
                 CT = "{} double precision".format(RASTL2[j])
             Module('v.db.addcolumn', map=OUTP, columns=CT)
             Module('v.what.rast', map=OUTP, raster=RAST2[j], column=RASTL2[j])
-
-    # Remove empty column
-    # TODO: find out how to avoid creating that column (created by r.what)
-    Module('v.db.dropcolumn', map=OUTP, columns='sitename999')
 
     # Write metadata
     opt2 = dict((k, v) for k, v in options.iteritems() if v)
