@@ -68,6 +68,7 @@ import sys
 import grass.script as gs
 import string
 import uuid
+import atexit
 from grass.pygrass.modules import Module
 from subprocess import PIPE
 import tempfile
