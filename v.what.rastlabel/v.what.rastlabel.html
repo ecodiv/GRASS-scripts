@@ -5,8 +5,8 @@ or more given raster maps for each point stored in a given vector map.
 The name of the columns with the raster values and labels are
 respectively<i>ID_name-of-raster-map</i> and <i>name-of-raster-map</i>.
 
-<p>Optionally, the user can define raster layers without labels. In
-that case only raster values are uploaded to a column with the name
+<p>Optionally, the user can define raster layers without labels. In that case
+only raster values are uploaded to a column with the name
 <i>name-of-raster-map</i>.
 
 <p>Except the columns with raster values, the attribute table of the
@@ -14,11 +14,17 @@ output vector point map contains columns with coordinates [should
 probably be removed in future version] and a column 'label', which
 contains the cat values of input vector layer.
 
+<p>Instead of creating a new vector layer, there is also the option to write
+the raster values and lables written to the input vector layer. Note that if
+there is already a column with the same name as the raster layer, the values in
+that column will be overwritten without warning!
+
 <h2>SEE ALSO</h2>
 
 <em>
-<a href="v.what.rast">r.mapcalc</a>,
-<a href="r.what">r.li</a>
+<a href="v.what.rast">v.what.rast</a>,
+<a href="https://grass.osgeo.org/grass72/manuals/addons/v.what.rast.multi.html">
+    r.what.rast.multi</a>
 </em>
 
 <h2>AUTHORS</h2>
