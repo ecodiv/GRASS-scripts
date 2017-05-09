@@ -77,7 +77,14 @@ import tempfile
 CLEAN_RAST = []
 
 
-# Create temporary name
+def cleanup():
+    """Remove temporary maps specified in the global list"""
+    cleanrast = list(reversed(CLEAN_RAST))
+    for rast in cleanrast:
+        gs.run_command("g.remove", flags="f", type="all",
+                       name=rast, quiet=True)
+
+
 def tmpname(prefix):
     """Generate a tmp name which contains prefix
     Store the name in the global list.
