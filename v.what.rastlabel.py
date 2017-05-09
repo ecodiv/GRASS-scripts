@@ -29,12 +29,14 @@
 #%option G_OPT_V_MAP
 #% key: vector
 #% description: Name vector points map for which to add raster values & labels
+#% guisection: Input
 #% required: yes
 #%end
 
 #%option G_OPT_R_INPUTS
 #% key: raster
 #% description: Name of raster map(s) with labels to be queried
+#% guisection: Input
 #% required: yes
 #% multiple: yes
 #%end
@@ -42,6 +44,7 @@
 #%option G_OPT_R_INPUTS
 #% key: raster2
 #% description: Name of raster map(s) without labels to be queried
+#% guisection: Input
 #% required: no
 #% multiple: yes
 #%end
@@ -49,13 +52,13 @@
 #%option G_OPT_V_OUTPUT
 #% description: Name of output point layer
 #% key_desc: name
+#% guisection: Input
 #% required: no
 #%end
 
 #%flag
 #% key: o
-#% description: add columns to input vector map
-#% required: no
+#% description: Add columns to input vector map
 #%end
 
 #%rules
@@ -114,8 +117,8 @@ def main(options, flags):
     RASTL2 = [x.lower() for x in RASTL2]
     VECT = options['vector']
     OUTP = options['output']
-    if not OUTPUT:
-        OUTPUT = tmpname("v_what_rastlabel")
+    if not OUTP:
+        OUTP = tmpname("v_what_rastlabel")
     flag_o = flags['o']
 
     # Create vector with column names
@@ -146,11 +149,22 @@ def main(options, flags):
     # Get raster points of raster layers without labels (optional)
     if options['raster2']:
         for j in xrange(len(RAST2)):
-            Module('v.what.rast', map=OUTP, raster=RAST2[j], column=RASTL2[j])
+            Module('v.what.rast', map=OUTP, raster=RAST2[j],
+                   column=RASTL2[j], quiet=True)
 
-    # Join table to original layer (without x,y columns)
+    # Join table to original layer (without cat, x, y and label columns)
+    # TODO: need to make it impossible to overwrite of existing column values
+    # without explicit setting overwrite.
+    # TODO: join action seems slow?
     if flag_o:
-        cols = CNT + RASTL2
+        cols = (Module('db.columns', table=OUTP, stdout_=PIPE).
+                outputs.stdout.
+                split('\n'))
+        cols.pop()
+        del cols[:4]
+
+        sqlstat = "CREATE INDEX {0}_label ON {0} (label);".format(OUTP)
+        Module('db.execute', sql=sqlstat)
         Module('v.db.join', map=VECT, column='cat', other_table=OUTP,
                other_column='label', subset_columns=cols)
 
